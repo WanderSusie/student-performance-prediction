@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Performance Prediction AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <i class="fa-solid fa-graduation-cap"></i>
+                <span>EduPredict AI</span>
+            </div>
+            <ul class="nav-links">
+                <li class="active" data-target="predict-score">
+                    <i class="fa-solid fa-chart-line"></i> Predict Score
+                </li>
+                <li data-target="predict-grade">
+                    <i class="fa-solid fa-medal"></i> Predict Grade
+                </li>
+                <li data-target="model-insights">
+                    <i class="fa-solid fa-chart-pie"></i> Model Insights
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="content-area">
+            
+            <header>
+                <h1>Student Performance Prediction</h1>
+                <p>AI-powered insights driven by Linear Regression & Support Vector Classification</p>
+            </header>
+
+            <!-- TAB 1: Predict Score -->
+            <section id="predict-score" class="tab-pane active">
+                <div class="glass-card dual-layout">
+                    <!-- Form Input -->
+                    <div class="input-section">
+                        <h2><i class="fa-solid fa-sliders"></i> Input Parameters</h2>
+                        <form id="score-form">
+                            <div class="form-group">
+                                <label for="score-study">Study Hours (Weekly)</label>
+                                <input type="number" id="score-study" name="study_hours_per_week" step="0.5" min="0" max="40" value="15" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="score-attendance">Attendance (%)</label>
+                                <input type="number" id="score-attendance" name="attendance_percentage" step="1" min="0" max="100" value="85" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="score-prev">Previous Exam Score</label>
+                                <input type="number" id="score-prev" name="previous_exam_score" step="1" min="0" max="100" value="75" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="score-assignments">Assignments Completed (out of 10)</label>
+                                <input type="number" id="score-assignments" name="assignments_completed" step="1" min="0" max="10" value="8" required>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group half-width">
+                                    <label for="score-sleep">Sleep Hrs/Night</label>
+                                    <input type="number" id="score-sleep" name="sleep_hours" step="0.5" min="0" max="12" value="7.5" required>
+                                </div>
+                                <div class="form-group half-width">
+                                    <label for="score-extra">Extra-curricular Hrs</label>
+                                    <input type="number" id="score-extra" name="extracurricular_hours" step="0.5" min="0" max="20" value="5" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group half-width">
+                                    <label for="score-parent">Parent Education</label>
+                                    <select id="score-parent" name="parent_education_level">
+                                        <option value="1">High School or lower</option>
+                                        <option value="2">Some College</option>
+                                        <option value="3" selected>Bachelor's</option>
+                                        <option value="4">Master's or higher</option>
+                                    </select>
+                                </div>
+                                <div class="form-group half-width">
+                                    <label for="score-internet">Home Internet</label>
+                                    <select id="score-internet" name="internet_access">
+                                        <option value="1" selected>Yes</option>
+                                        <option value="0">No</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn-primary">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> Predict Expected Score
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <!-- Result Display -->
+                    <div class="result-section">
+                        <div class="result-circle empty" id="score-result-circle">
+                            <span class="score-value">--</span>
+                            <span class="score-label">out of 100</span>
+                        </div>
+                        <p class="model-type-badge">Powered by Linear Regression</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: Predict Grade -->
+            <section id="predict-grade" class="tab-pane">
+                 <div class="glass-card dual-layout">
+                    <!-- Form Input -->
+                    <div class="input-section">
+                        <h2><i class="fa-solid fa-sliders"></i> Input Parameters</h2>
+                        <form id="grade-form">
+                            <div class="form-group">
+                                <label for="grade-study">Study Hours (Weekly)</label>
+                                <input type="number" id="grade-study" name="study_hours_per_week" step="0.5" min="0" max="40" value="15" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="grade-attendance">Attendance (%)</label>
+                                <input type="number" id="grade-attendance" name="attendance_percentage" step="1" min="0" max="100" value="85" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="grade-prev">Previous Exam Score</label>
+                                <input type="number" id="grade-prev" name="previous_exam_score" step="1" min="0" max="100" value="75" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="grade-assignments">Assignments Completed (out of 10)</label>
+                                <input type="number" id="grade-assignments" name="assignments_completed" step="1" min="0" max="10" value="8" required>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group half-width">
+                                    <label for="grade-sleep">Sleep Hrs/Night</label>
+                                    <input type="number" id="grade-sleep" name="sleep_hours" step="0.5" min="0" max="12" value="7.5" required>
+                                </div>
+                                <div class="form-group half-width">
+                                    <label for="grade-extra">Extra-curricular Hrs</label>
+                                    <input type="number" id="grade-extra" name="extracurricular_hours" step="0.5" min="0" max="20" value="5" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group half-width">
+                                    <label for="grade-parent">Parent Education</label>
+                                    <select id="grade-parent" name="parent_education_level">
+                                        <option value="1">High School or lower</option>
+                                        <option value="2">Some College</option>
+                                        <option value="3" selected>Bachelor's</option>
+                                        <option value="4">Master's or higher</option>
+                                    </select>
+                                </div>
+                                <div class="form-group half-width">
+                                    <label for="grade-internet">Home Internet</label>
+                                    <select id="grade-internet" name="internet_access">
+                                        <option value="1" selected>Yes</option>
+                                        <option value="0">No</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn-secondary">
+                                <i class="fa-solid fa-sitemap"></i> Predict Letter Grade
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <!-- Result Display -->
+                    <div class="result-section">
+                        <div class="result-circle badge-empty" id="grade-result-circle">
+                            <span class="grade-letter">?</span>
+                        </div>
+                        <div class="probability-bars" id="prob-bars-container" style="display:none;">
+                            <h4>Class Probabilities</h4>
+                            <!-- Rendered injected JS -->
+                        </div>
+                        <p class="model-type-badge">Powered by Random Forest Classifier</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: Model Insights -->
+            <section id="model-insights" class="tab-pane">
+                <div class="insights-grid">
+                    <!-- Metrics Card -->
+                    <div class="glass-card stat-card">
+                        <h3><i class="fa-solid fa-square-root-variable"></i> Linear Regression Metrics</h3>
+                        <div class="metric-row">
+                            <span class="metric-label">R² Score</span>
+                            <span class="metric-value highlight-blue" id="metric-r2">--</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">RMSE</span>
+                            <span class="metric-value" id="metric-rmse">--</span>
+                        </div>
+                        <p class="metric-desc">R² (R-squared) represents the proportion of the variance in the predicted exam score that is predictable from the input features.</p>
+
+                        <h3 class="mt-4"><i class="fa-solid fa-tree"></i> Classifier Metrics</h3>
+                        <div class="metric-row">
+                            <span class="metric-label">Accuracy Score</span>
+                            <span class="metric-value highlight-purple" id="metric-acc">--</span>
+                        </div>
+                        <p class="metric-desc">The Random Forest classifier groups numeric scores into letter grades (A,B,C,D,F).</p>
+                    </div>
+
+                    <!-- Feature Importance Chart -->
+                    <div class="glass-card chart-card">
+                        <h3>Feature Importance (Classifier)</h3>
+                        <div class="chart-container">
+                            <canvas id="importanceChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
