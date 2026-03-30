@@ -1,259 +1,286 @@
-<![CDATA[# 🎓 EduPredict AI — Student Performance Prediction Dashboard
+<![CDATA[<div align="center">
 
-> An AI-powered web dashboard that leverages Machine Learning to predict a student's future exam performance and letter grade based on their study habits, demographics, and historical data.
+# 🎓 EduPredict AI
 
----
+### _AI-Powered Student Performance Prediction Dashboard_
 
-## 📑 Table of Contents
+[![Python](https://img.shields.io/badge/Python-3.8+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![Flask](https://img.shields.io/badge/Flask-3.0-000000?style=for-the-badge&logo=flask&logoColor=white)](https://flask.palletsprojects.com)
+[![scikit-learn](https://img.shields.io/badge/scikit--learn-1.4-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)](https://scikit-learn.org)
+[![Chart.js](https://img.shields.io/badge/Chart.js-4.0-FF6384?style=for-the-badge&logo=chartdotjs&logoColor=white)](https://www.chartjs.org)
+[![License](https://img.shields.io/badge/License-MIT-22c55e?style=for-the-badge)](LICENSE)
 
-- [Overview](#overview)
-- [Features](#-features)
-- [System Architecture](#-system-architecture)
-- [Technology Stack](#-technology-stack)
-- [Project Structure](#-project-structure)
-- [Data Pipeline](#-data-pipeline)
-- [Machine Learning Models](#-machine-learning-models)
-- [API Reference](#-api-reference)
-- [Frontend Design](#-frontend-design)
-- [Quick Start](#-quick-start)
-- [Configuration & Environment](#%EF%B8%8F-configuration--environment)
-- [Usage Guide](#-usage-guide)
-- [Performance & Metrics](#-performance--metrics)
-- [Contributing](#-contributing)
-- [License](#-license)
+<br/>
+
+> 🔮 _Enter a student's study habits, attendance, and background — get an instant AI prediction of their exam score and letter grade._
+
+<br/>
 
 ---
 
-## Overview
+</div>
 
-**EduPredict AI** is a full-stack web application that combines supervised machine learning with a glassmorphism-themed dashboard to provide actionable academic predictions. Given a set of 8 input features describing a student's habits and background, the system outputs:
+<br/>
 
-1. A **numerical exam score** (0–100) via Linear Regression.
-2. A **letter grade classification** (A / B / C / D / F) with per-class probability distributions via Random Forest.
+## 💡 What is EduPredict AI?
 
-The project is fully self-contained: it ships with its own synthetic data generator, model training pipeline, and a production-ready Flask web server — no external datasets or APIs required.
+EduPredict AI is a **full-stack machine learning web app** that predicts student academic performance. It takes **8 simple inputs** about a student (like study hours, attendance, and sleep) and delivers:
 
----
+| | Prediction | Model Used | Output |
+|---|---|---|---|
+| 📊 | **Exam Score** | Linear Regression | A number between 0–100 |
+| 🏅 | **Letter Grade** | Random Forest Classifier | A / B / C / D / F with confidence % |
 
-## 🌟 Features
+No external APIs. No cloud dependencies. Everything runs **locally on your machine**.
 
-| Feature | Description |
-|---------|-------------|
-| **Score Predictor** | Linear Regression model estimates a final exam score (0–100) from 8 student features. |
-| **Grade Classifier** | Random Forest Classifier outputs the most likely letter grade (A–F) alongside per-class probability bars. |
-| **Model Insights Dashboard** | Live metrics display — R² Score, RMSE, Classifier Accuracy — plus an interactive Feature Importance bar chart via Chart.js. |
-| **Glassmorphism UI** | Premium dark-themed interface with frosted-glass cards, gradient accents, and smooth micro-animations. |
-| **Synthetic Data Pipeline** | Deterministic, seed-controlled generator produces realistic, correlated student records at any scale. |
-| **RESTful API** | Clean JSON API endpoints for both prediction models and model metrics — easy to integrate with external tools. |
-| **Animated Results** | Score counting animation and grade pop-in effects give a polished, interactive experience. |
+<br/>
 
 ---
 
-## 🏗 System Architecture
+## ✨ Key Features
+
+<table>
+<tr>
+<td width="50%">
+
+### 🎯 Score Prediction
+Enter student data → get a predicted exam score out of 100, powered by **Linear Regression**. Results animate with a smooth count-up effect inside a glowing circle.
+
+</td>
+<td width="50%">
+
+### 🏅 Grade Classification
+Same inputs → get a letter grade (A through F) with a **probability breakdown** for each class, powered by a **100-tree Random Forest**.
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### 📈 Model Insights Dashboard
+See how well the models perform — **R² Score**, **RMSE**, **Accuracy** — plus an interactive **Feature Importance** chart showing which factors matter most.
+
+</td>
+<td width="50%">
+
+### 🎨 Premium Dark UI
+A sleek **glassmorphism** interface with frosted-glass cards, gradient accents, smooth animations, and the **Inter** font. No bulky frameworks — pure vanilla CSS.
+
+</td>
+</tr>
+</table>
+
+<br/>
+
+---
+
+## 🏗️ How It Works
+
+The project has three stages that run in sequence:
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                         USER (Browser)                              │
-│   ┌───────────────────────────────────────────────────────────┐     │
-│   │     Frontend: HTML5 + Vanilla CSS + JavaScript + Chart.js │     │
-│   │     (Glassmorphism UI with tab-based navigation)          │     │
-│   └────────────────────────┬──────────────────────────────────┘     │
-│                            │  HTTP (JSON)                           │
-└────────────────────────────┼────────────────────────────────────────┘
-                             │
-┌────────────────────────────▼────────────────────────────────────────┐
-│                       Flask Web Server (app.py)                     │
-│  ┌──────────────────┐  ┌──────────────────┐  ┌───────────────────┐ │
-│  │  GET /            │  │ POST /api/       │  │ GET /api/         │ │
-│  │  Serve index.html │  │ predict-score    │  │ model-metrics     │ │
-│  │                   │  │ predict-grade    │  │                   │ │
-│  └──────────────────┘  └───────┬──────────┘  └────────┬──────────┘ │
-│                                │                       │            │
-│  ┌─────────────────────────────▼───────────────────────▼──────────┐ │
-│  │                   Model Artifacts (models/)                    │ │
-│  │  linear_model.pkl │ classifier_model.pkl │ scaler.pkl │ metrics│ │
-│  └───────────────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────────────┐
-│                  Offline Pipeline (run once)                         │
-│  generate_dataset.py ────▶ data/student_data.csv                    │
-│  ml_pipeline.py ─────────▶ models/*.pkl + models/metrics.json       │
-└─────────────────────────────────────────────────────────────────────┘
+  ┌──────────────────┐       ┌──────────────────┐       ┌──────────────────┐
+  │  1️⃣  GENERATE     │──────▶│  2️⃣  TRAIN        │──────▶│  3️⃣  SERVE        │
+  │                  │       │                  │       │                  │
+  │ generate_        │       │ ml_pipeline.py   │       │ app.py           │
+  │ dataset.py       │       │                  │       │ (Flask server)   │
+  │                  │       │ Trains 2 models: │       │                  │
+  │ Creates 1,000    │       │ • Linear Reg.    │       │ Loads models &   │
+  │ synthetic        │       │ • Random Forest  │       │ serves the web   │
+  │ student records  │       │                  │       │ dashboard with   │
+  │                  │       │ Saves .pkl files │       │ real-time        │
+  │ ➜ student_       │       │ + metrics.json   │       │ predictions      │
+  │   data.csv       │       │ to models/       │       │ on port 5000     │
+  └──────────────────┘       └──────────────────┘       └──────────────────┘
 ```
 
-**Data flow summary:**
-
-1. `generate_dataset.py` creates a synthetic CSV dataset.
-2. `ml_pipeline.py` reads that CSV, trains two models (regression + classifier), scales features, and serializes everything to `models/`.
-3. `app.py` loads the serialized artifacts at startup and serves predictions through a Flask API.
-4. The browser-based frontend consumes those API endpoints to display results in real-time.
-
----
-
-## 🛠 Technology Stack
-
-| Layer | Technology | Purpose |
-|-------|-----------|---------|
-| **Backend** | Python 3.8+, Flask 3.0.3 | Web server, API routing, template rendering |
-| **Machine Learning** | scikit-learn 1.4.1 | Linear Regression, Random Forest Classifier, StandardScaler |
-| **Data Processing** | pandas 2.2.2, numpy 1.26.4 | DataFrame operations, numerical computation |
-| **Model Persistence** | joblib 1.3.2 | Serialization of trained models and scaler |
-| **Frontend** | HTML5, CSS3, Vanilla JavaScript | UI structure, styling, interactivity |
-| **Charts** | Chart.js (CDN) | Feature Importance bar visualization |
-| **Typography** | Google Fonts (Inter) | Modern, clean typeface |
-| **Icons** | Font Awesome 6.4.0 (CDN) | Navigation and UI iconography |
+<br/>
 
 ---
 
 ## 📂 Project Structure
 
 ```
-student-performance-prediction/
-├── app.py                    # Flask web server & API endpoints
-├── ml_pipeline.py            # Model training, evaluation, and export
-├── generate_dataset.py       # Synthetic student data generator
-├── requirements.txt          # Python dependencies
-├── .gitignore                # Git exclusion rules
-├── README.md                 # This documentation
+📦 student-performance-prediction/
 │
-├── data/
-│   └── student_data.csv      # Generated synthetic dataset (1,000 records)
+├── 🐍 app.py                     ← Flask server + 3 API endpoints
+├── 🤖 ml_pipeline.py             ← Model training & evaluation
+├── 🎲 generate_dataset.py        ← Synthetic data generator
+├── 📋 requirements.txt           ← Python dependencies (5 packages)
+├── 📖 README.md                  ← You are here!
 │
-├── models/
-│   ├── linear_model.pkl      # Trained Linear Regression model (~696 B)
-│   ├── classifier_model.pkl  # Trained Random Forest model (~4.3 MB)
-│   ├── scaler.pkl            # Fitted StandardScaler (~1.2 KB)
-│   └── metrics.json          # Evaluation metrics for the frontend
+├── 📁 data/
+│   └── student_data.csv          ← 1,000 generated student records
 │
-├── static/
-│   ├── css/
-│   │   └── style.css         # Glassmorphism theme & component styles
-│   └── js/
-│       └── app.js            # Frontend logic (forms, fetch, charts)
+├── 📁 models/
+│   ├── linear_model.pkl          ← Trained regression model
+│   ├── classifier_model.pkl      ← Trained Random Forest
+│   ├── scaler.pkl                ← Feature scaler (StandardScaler)
+│   └── metrics.json              ← R², RMSE, accuracy, importances
 │
-└── templates/
-    └── index.html            # Main single-page dashboard template
+├── 📁 static/
+│   ├── css/style.css             ← Dark theme + glassmorphism styles
+│   └── js/app.js                 ← Frontend logic (forms, charts, animations)
+│
+└── 📁 templates/
+    └── index.html                ← Single-page dashboard UI
 ```
+
+<br/>
 
 ---
 
-## 📊 Data Pipeline
+## 🚀 Quick Start
 
-### Synthetic Data Generator (`generate_dataset.py`)
+> **Prerequisites:** Python 3.8+ and pip installed.
 
-The project uses a **deterministic, seed-controlled** data generator instead of relying on external datasets. This ensures:
-- **Reproducibility** — `np.random.seed(42)` guarantees identical output across runs.
-- **Privacy** — No real student data is ever used.
-- **Scalability** — Adjust `num_students` parameter to generate any volume of records.
+### Step 1 — Clone & enter the project
 
-### Feature Definitions
+```bash
+git clone https://github.com/WanderSusie/student-performance-prediction.git
+cd student-performance-prediction
+```
 
-| # | Feature | Type | Range | Description |
-|---|---------|------|-------|-------------|
-| 1 | `study_hours_per_week` | Continuous | 0 – 40 | Weekly hours spent studying |
-| 2 | `attendance_percentage` | Continuous | 40 – 100 | Class attendance rate (%) |
-| 3 | `previous_exam_score` | Continuous | 20 – 100 | Score on the prior exam |
-| 4 | `assignments_completed` | Discrete | 0 – 10 | Number of assignments turned in |
-| 5 | `sleep_hours` | Continuous | 3 – 10 | Average nightly sleep |
-| 6 | `extracurricular_hours` | Continuous | 0 – 15 | Weekly extracurricular time |
-| 7 | `parent_education_level` | Ordinal | 1 – 4 | 1 = HS, 2 = Some College, 3 = Bachelor's, 4 = Master's+ |
-| 8 | `internet_access` | Binary | 0 / 1 | Whether the student has home internet |
+### Step 2 — Set up virtual environment _(recommended)_
 
-### Target Variables
+```bash
+python -m venv .venv
+.venv\Scripts\activate        # Windows
+# source .venv/bin/activate   # macOS / Linux
+```
 
-| Target | Type | Derivation |
-|--------|------|------------|
-| `exam_score` | Continuous (0–100) | Weighted linear combination of features + Gaussian noise (σ = 5) |
-| `grade` | Categorical (A–F) | Thresholded from `exam_score`: A ≥ 90, B ≥ 80, C ≥ 70, D ≥ 60, F < 60 |
+### Step 3 — Install dependencies
 
-### Score Formula
+```bash
+pip install -r requirements.txt
+```
+
+### Step 4 — Generate the dataset
+
+```bash
+python generate_dataset.py
+```
+> ✅ Creates `data/student_data.csv` with 1,000 synthetic student records.
+
+### Step 5 — Train the ML models
+
+```bash
+python ml_pipeline.py
+```
+> ✅ Trains both models, prints metrics, and saves everything to `models/`.
+
+### Step 6 — Launch the dashboard! 🎉
+
+```bash
+python app.py
+```
+> 🌐 Open **http://127.0.0.1:5000** in your browser.
+
+<br/>
+
+---
+
+## 📊 The Dataset — 8 Features That Predict Performance
+
+Every student record contains **8 input features** and **2 targets**:
+
+| # | Feature | Type | Range | What It Represents |
+|:-:|---------|:----:|:-----:|-------------------|
+| 1 | `study_hours_per_week` | 📐 Continuous | 0 – 40 | Hours spent studying each week |
+| 2 | `attendance_percentage` | 📐 Continuous | 40 – 100 | How often the student attends class |
+| 3 | `previous_exam_score` | 📐 Continuous | 20 – 100 | Score on the last exam |
+| 4 | `assignments_completed` | 🔢 Discrete | 0 – 10 | How many assignments were submitted |
+| 5 | `sleep_hours` | 📐 Continuous | 3 – 10 | Average hours of sleep per night |
+| 6 | `extracurricular_hours` | 📐 Continuous | 0 – 15 | Weekly time in extracurriculars |
+| 7 | `parent_education_level` | 📊 Ordinal | 1 – 4 | 1=HS, 2=Some College, 3=Bachelor's, 4=Master's+ |
+| 8 | `internet_access` | ✅ Binary | 0 / 1 | Does the student have internet at home? |
+
+### 🎯 Targets
+
+| Target | Type | How It's Created |
+|--------|------|-----------------|
+| **exam_score** | Continuous (0–100) | Weighted sum of all 8 features + random noise |
+| **grade** | Categorical | A ≥ 90 \| B ≥ 80 \| C ≥ 70 \| D ≥ 60 \| F < 60 |
+
+<details>
+<summary>🧮 <strong>Click to see the exact score formula</strong></summary>
+
+<br/>
 
 ```
 exam_score = 10
-    + study_hours_per_week × 0.8
-    + attendance_percentage × 0.3
-    + previous_exam_score × 0.4
-    + assignments_completed × 1.5
-    + sleep_hours × 0.5
-    − extracurricular_hours × 0.2
-    + parent_education_level × 1.5
-    + internet_access × 3.0
-    + 𝒩(0, 5)        ← Gaussian noise
+    + study_hours       × 0.8     ← strongest positive factor
+    + attendance        × 0.3
+    + previous_score    × 0.4     ← past performance matters
+    + assignments       × 1.5     ← high per-unit weight
+    + sleep_hours       × 0.5
+    − extracurriculars  × 0.2     ← slight drag if too high
+    + parent_education  × 1.5
+    + internet_access   × 3.0
+    + Gaussian noise σ=5          ← realistic randomness
 ```
 
-The resulting score is clipped to the [0, 100] range. This formula ensures that the features with the strongest impact are **study hours**, **previous exam score**, and **assignments completed** — consistent with real-world education research.
+Result is clipped to **[0, 100]**.
+
+</details>
+
+<br/>
 
 ---
 
-## 🤖 Machine Learning Models
+## 🤖 The ML Models
 
-### Training Pipeline (`ml_pipeline.py`)
+### Model 1 — Linear Regression _(Score Prediction)_
 
-The pipeline executes the following steps in order:
-
-```
-Load CSV → Split Features/Targets → StandardScaler fit → 80/20 Train-Test Split
-    ├── Train Linear Regression → Evaluate (R², RMSE) → Serialize .pkl
-    └── Train Random Forest Classifier (100 trees) → Evaluate (Accuracy) → Serialize .pkl
-          └── Extract Feature Importances
-Save scaler.pkl + metrics.json
-```
-
-### Model 1: Linear Regression (Score Prediction)
-
-| Property | Value |
-|----------|-------|
+| | |
+|---|---|
 | **Algorithm** | `sklearn.linear_model.LinearRegression` |
-| **Input** | 8 standardized features |
-| **Output** | Continuous exam score, clamped to [0, 100] |
-| **Evaluation Metric** | R² Score, RMSE |
-| **Use Case** | "How much will this student likely score?" |
+| **Purpose** | Predict a continuous exam score (0–100) |
+| **Input** | 8 features, scaled via StandardScaler |
+| **Typical R²** | **~0.98** _(explains 98% of score variance)_ |
+| **Typical RMSE** | **~1.7** _(average prediction error of ±1.7 points)_ |
 
-### Model 2: Random Forest Classifier (Grade Prediction)
+### Model 2 — Random Forest _(Grade Classification)_
 
-| Property | Value |
-|----------|-------|
+| | |
+|---|---|
 | **Algorithm** | `sklearn.ensemble.RandomForestClassifier` |
-| **Hyperparameters** | `n_estimators=100`, `random_state=42` |
-| **Input** | 8 standardized features |
-| **Output** | Letter grade (A/B/C/D/F) + class probability vector |
-| **Evaluation Metric** | Accuracy Score, Classification Report |
-| **Use Case** | "What letter grade is this student most likely to receive?" |
+| **Trees** | 100 estimators, `random_state=42` |
+| **Purpose** | Classify into letter grades (A / B / C / D / F) |
+| **Input** | 8 features, scaled via StandardScaler |
+| **Typical Accuracy** | **~95%+** |
+| **Bonus** | Returns per-class probability distribution |
 
-### Feature Scaling
+### Why two models?
 
-All features are normalized using `sklearn.preprocessing.StandardScaler` (zero-mean, unit-variance). The fitted scaler is persisted to `scaler.pkl` so that inference-time inputs receive identical transformations.
+| Question You're Asking | Best Model | Example Output |
+|------------------------|-----------|---------------|
+| _"How many marks will I get?"_ | Linear Regression | **78.5 / 100** |
+| _"What grade will I receive?"_ | Random Forest | **Grade B** _(55.7% confidence)_ |
 
-### Model Artifacts
+> 💡 **Note:** These metrics are strong because the data is synthetic (generated from a known formula). Real-world data would yield lower scores due to noise, missing variables, and non-linear relationships.
 
-After training, four files are saved to `models/`:
-
-| File | Size | Contents |
-|------|------|----------|
-| `linear_model.pkl` | ~696 B | Serialized Linear Regression coefficients |
-| `classifier_model.pkl` | ~4.3 MB | Serialized 100-tree Random Forest |
-| `scaler.pkl` | ~1.2 KB | Fitted StandardScaler (mean + std per feature) |
-| `metrics.json` | ~416 B | R², RMSE, Accuracy, feature names & importances |
+<br/>
 
 ---
 
 ## 🔌 API Reference
 
-The Flask server exposes three endpoints. All prediction endpoints accept and return **JSON**.
+The Flask server exposes **3 endpoints**. All prediction routes accept and return JSON.
 
-### `GET /`
+<details>
+<summary><strong><code>GET /</code></strong> — Serve the dashboard</summary>
 
-Serves the main dashboard HTML page.
+Returns the `index.html` template with the full UI.
 
----
+</details>
 
-### `POST /api/predict-score`
+<details>
+<summary><strong><code>POST /api/predict-score</code></strong> — Predict exam score</summary>
 
-Predicts a numerical exam score using the Linear Regression model.
+<br/>
 
-**Request Body:**
-
+**Request:**
 ```json
 {
   "study_hours_per_week": 15,
@@ -267,8 +294,7 @@ Predicts a numerical exam score using the Linear Regression model.
 }
 ```
 
-**Success Response (200):**
-
+**Response (200):**
 ```json
 {
   "success": true,
@@ -276,24 +302,16 @@ Predicts a numerical exam score using the Linear Regression model.
 }
 ```
 
-**Error Response (400/500):**
+</details>
 
-```json
-{
-  "error": "Model not trained yet"
-}
-```
+<details>
+<summary><strong><code>POST /api/predict-grade</code></strong> — Predict letter grade</summary>
 
----
+<br/>
 
-### `POST /api/predict-grade`
+**Request:** Same 8-field JSON as above.
 
-Predicts a letter grade and per-class probabilities using the Random Forest Classifier.
-
-**Request Body:** Same schema as `/api/predict-score`.
-
-**Success Response (200):**
-
+**Response (200):**
 ```json
 {
   "success": true,
@@ -308,24 +326,18 @@ Predicts a letter grade and per-class probabilities using the Random Forest Clas
 }
 ```
 
----
+</details>
 
-### `GET /api/model-metrics`
+<details>
+<summary><strong><code>GET /api/model-metrics</code></strong> — Get model evaluation data</summary>
 
-Returns pre-computed evaluation metrics and feature importance data.
+<br/>
 
-**Success Response (200):**
-
+**Response (200):**
 ```json
 {
-  "regression": {
-    "r2_score": 0.9832,
-    "rmse": 1.7345
-  },
-  "classification": {
-    "accuracy": 0.955,
-    "classes": ["A", "B", "C", "D", "F"]
-  },
+  "regression": { "r2_score": 0.9832, "rmse": 1.7345 },
+  "classification": { "accuracy": 0.955, "classes": ["A","B","C","D","F"] },
   "features": {
     "names": ["study_hours_per_week", "attendance_percentage", "..."],
     "importances": [0.3412, 0.1567, "..."]
@@ -333,248 +345,108 @@ Returns pre-computed evaluation metrics and feature importance data.
 }
 ```
 
----
+</details>
 
-## 🎨 Frontend Design
-
-### Design Philosophy
-
-The UI follows a **glassmorphism** design language paired with a dark color scheme, creating a premium, modern aesthetic.
-
-### Design Tokens (CSS Custom Properties)
-
-| Token | Value | Usage |
-|-------|-------|-------|
-| `--bg-dark` | `#0f111a` | Page background |
-| `--bg-card` | `rgba(22, 25, 37, 0.6)` | Glass card base color |
-| `--primary-blue` | `#00e5ff` | Primary accent (Score Prediction) |
-| `--primary-purple` | `#9d4edd` | Secondary accent (Grade Prediction) |
-| `--text-main` | `#f8f9fa` | Body text |
-| `--text-muted` | `#adb5bd` | Subdued labels and descriptions |
-| `--border-color` | `rgba(255,255,255,0.1)` | Subtle glass borders |
-
-### Layout
-
-- **Sidebar** (260px fixed) — Vertical navigation with icon + label links.
-- **Content Area** (flex remaining) — Tab-pane system with fade-in animations.
-- **Glass Cards** — Each content panel uses `backdrop-filter: blur(16px)` with 20px border-radius.
-
-### Tab Views
-
-| Tab | Component | Description |
-|-----|-----------|-------------|
-| **Predict Score** | Form → Animated Score Circle | Inputs map to Linear Regression; result displays as an animated count-up inside a glowing circle. |
-| **Predict Grade** | Form → Grade Badge + Probability Bars | Inputs map to Random Forest; result pops in as a large letter with horizontal probability bars. |
-| **Model Insights** | Metrics Cards + Chart.js Bar Chart | Displays R², RMSE, Accuracy as highlight values. Feature Importance rendered as a styled bar chart. |
-
-### Animations
-
-- **Tab transitions:** `fadeIn` keyframe (opacity 0→1, translateY 10px→0) over 400ms.
-- **Score result:** Count-up animation over 1000ms with 30 discrete steps.
-- **Grade result:** Scale pop (0.5→1.0) using a `cubic-bezier(0.175, 0.885, 0.32, 1.275)` easing curve.
-- **Probability bars:** Width transition from 0% to target with 500ms ease.
-- **Buttons:** Lift effect on hover (`translateY(-2px)`) with colored box-shadow bloom.
+<br/>
 
 ---
 
-## 🚀 Quick Start
+## 🎨 Design & UI
 
-### Prerequisites
+The dashboard uses a custom **glassmorphism** dark theme — no CSS frameworks.
 
-- **Python 3.8+** installed on your machine
-- **pip** for installing Python dependencies
+| Design Token | Value | Used For |
+|---|---|---|
+| 🌑 Background | `#0f111a` | Page base |
+| 🔵 Primary Accent | `#00e5ff` | Score tab, buttons, highlights |
+| 🟣 Secondary Accent | `#9d4edd` | Grade tab, charts, badges |
+| 🔤 Font | [Inter](https://fonts.google.com/specimen/Inter) | All text |
+| 🪟 Glass Effect | `backdrop-filter: blur(16px)` | Cards and panels |
 
-### 1. Clone the Repository
+### ✨ Micro-Animations
 
-```bash
-git clone https://github.com/YOUR_USERNAME/student-performance-prediction.git
-cd student-performance-prediction
-```
+- **Score result** — Animated count-up from 0 to predicted value (1s)
+- **Grade result** — Pop-in scale animation with elastic easing
+- **Probability bars** — Width transitions from 0% → target (500ms ease)
+- **Tab switching** — Fade-in with subtle upward slide
+- **Buttons** — Lift on hover with colored shadow bloom
 
-### 2. Create a Virtual Environment (Recommended)
-
-```bash
-python -m venv .venv
-
-# Windows
-.venv\Scripts\activate
-
-# macOS / Linux
-source .venv/bin/activate
-```
-
-### 3. Install Dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Generate the Dataset
-
-```bash
-python generate_dataset.py
-```
-
-✅ Creates `data/student_data.csv` with **1,000 synthetic** student records.
-
-### 5. Train the ML Models
-
-```bash
-python ml_pipeline.py
-```
-
-✅ Trains both models, prints evaluation metrics, and saves artifacts to `models/`.
-
-**Expected output:**
-
-```
-Starting ML Pipeline...
-
-Training Linear Regression Model...
-Linear Regression R2 Score: 0.98xx
-Linear Regression RMSE: 1.xxxx
-
-Training Random Forest Classifier...
-Classifier Accuracy: 0.9xxx
-
-Classification Report:
-              precision    recall  f1-score   support
-           A       ...       ...       ...       ...
-           B       ...       ...       ...       ...
-           C       ...       ...       ...       ...
-           D       ...       ...       ...       ...
-           F       ...       ...       ...       ...
-
-Pipeline Complete! Models and artifacts saved to 'models/' directory.
-```
-
-### 6. Launch the Web Application
-
-```bash
-python app.py
-```
-
-Open **[http://127.0.0.1:5000](http://127.0.0.1:5000)** in your browser.
+<br/>
 
 ---
 
-## ⚙️ Configuration & Environment
-
-### Port Configuration
-
-The Flask server runs on **port 5000** by default. To change it, modify the last line in `app.py`:
-
-```python
-app.run(debug=True, port=8080)  # Change to desired port
-```
-
-### Debug Mode
-
-Debug mode is **enabled** by default for development (`debug=True`). For production:
-
-```python
-app.run(debug=False, host='0.0.0.0', port=5000)
-```
-
-### Dataset Size
-
-To generate more or fewer records, pass a custom count to the generator:
-
-```python
-# In generate_dataset.py, change:
-generate_student_data(5000)  # Generate 5,000 records instead of 1,000
-```
-
-### Dependencies
-
-All pinned versions are specified in `requirements.txt`:
+## 🛠️ Tech Stack at a Glance
 
 ```
-Flask==3.0.3
-scikit-learn==1.4.1.post1
-pandas==2.2.2
-numpy==1.26.4
-joblib==1.3.2
+┌────────────────────────────────────────────────────────────┐
+│  FRONTEND            │  BACKEND             │  ML LAYER   │
+│                      │                      │             │
+│  HTML5               │  Python 3.8+         │  scikit-    │
+│  Vanilla CSS3        │  Flask 3.0.3         │  learn      │
+│  Vanilla JavaScript  │  Jinja2 Templates    │  1.4.1      │
+│  Chart.js (CDN)      │  joblib 1.3.2        │             │
+│  Font Awesome 6.4    │                      │  pandas     │
+│  Google Fonts        │                      │  numpy      │
+│  (Inter)             │                      │             │
+└────────────────────────────────────────────────────────────┘
 ```
+
+<br/>
 
 ---
 
-## 📖 Usage Guide
+## ⚙️ Configuration
 
-### Predicting a Score
+| Setting | Default | How to Change |
+|---------|---------|--------------|
+| **Port** | `5000` | Edit `app.run(port=XXXX)` in `app.py` |
+| **Debug Mode** | `True` | Set `debug=False` for production |
+| **Dataset Size** | `1,000` | Call `generate_student_data(5000)` in `generate_dataset.py` |
+| **Random Seed** | `42` | Change `np.random.seed()` in generator & pipeline |
+| **RF Trees** | `100` | Change `n_estimators` in `ml_pipeline.py` |
 
-1. Click **"Predict Score"** in the sidebar.
-2. Fill in the 8 input fields (study hours, attendance, etc.).
-3. Click **"Predict Expected Score"**.
-4. The predicted score animates into the glowing circle on the right.
-
-### Predicting a Grade
-
-1. Click **"Predict Grade"** in the sidebar.
-2. Fill in the same 8 input fields.
-3. Click **"Predict Letter Grade"**.
-4. The predicted grade pops into the badge, and probability bars appear below showing confidence per grade.
-
-### Viewing Model Insights
-
-1. Click **"Model Insights"** in the sidebar.
-2. View R² Score, RMSE, and Classification Accuracy on the left.
-3. The Feature Importance chart loads on the right, showing which features the Random Forest classifier weighs most heavily.
-
----
-
-## 📈 Performance & Metrics
-
-The models achieve strong predictive performance on the synthetic dataset:
-
-| Model | Metric | Typical Value |
-|-------|--------|---------------|
-| Linear Regression | R² Score | ~0.98 |
-| Linear Regression | RMSE | ~1.7 |
-| Random Forest Classifier | Accuracy | ~95%+ |
-
-> **Note:** High performance is expected since the synthetic data is generated from a known linear formula. With real-world data, expect lower R² and accuracy due to non-linear relationships, noise, and missing variables.
-
-### Why Two Models?
-
-| Scenario | Model | Output |
-|----------|-------|--------|
-| "How many marks will I get?" | Linear Regression | 78.5 / 100 |
-| "What grade will I receive?" | Random Forest | Grade B (55.7% confidence) |
-
-Linear Regression provides a continuous numerical estimate, while the Random Forest Classifier frames the same prediction as a discrete, interpretable category with confidence levels.
+<br/>
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Here's how to get started:
+Contributions are welcome! Fork → Branch → Commit → PR.
 
-1. **Fork** the repository
-2. **Create a feature branch:** `git checkout -b feature/my-improvement`
-3. **Commit your changes:** `git commit -m "Add: description of change"`
-4. **Push to branch:** `git push origin feature/my-improvement`
-5. **Open a Pull Request**
+```bash
+git checkout -b feature/my-improvement
+git commit -m "Add: description of change"
+git push origin feature/my-improvement
+```
 
-### Suggested Improvements
-- [ ] Add cross-validation to the training pipeline
-- [ ] Implement hyperparameter tuning (GridSearchCV)
-- [ ] Support real-world datasets (UCI, Kaggle)
-- [ ] Add responsive CSS for mobile devices
-- [ ] Implement user authentication for saved predictions
-- [ ] Add data visualization (score distributions, correlations)
-- [ ] Containerize with Docker for easy deployment
-- [ ] Deploy to a cloud platform (Heroku, Railway, Render)
+### 💡 Ideas for Improvement
+
+- [ ] Add **cross-validation** to the training pipeline
+- [ ] Implement **hyperparameter tuning** (GridSearchCV)
+- [ ] Support **real-world datasets** (UCI, Kaggle)
+- [ ] Add **responsive CSS** for mobile devices
+- [ ] **Containerize** with Docker
+- [ ] Deploy to **Render / Railway / Heroku**
+- [ ] Add data **visualizations** (distributions, correlations)
+- [ ] Implement **user accounts** for saved predictions
+
+<br/>
 
 ---
 
 ## 📄 License
 
-This project is open source and available under the [MIT License](LICENSE).
+This project is open source under the **[MIT License](LICENSE)**.
+
+<br/>
 
 ---
 
-<p align="center">
-  <strong>Built with ❤️ using Python, scikit-learn, Flask & Chart.js</strong>
-</p>
+<div align="center">
+
+**Built with ❤️ using Python · scikit-learn · Flask · Chart.js**
+
+_If you found this useful, consider giving it a ⭐!_
+
+</div>
 ]]>
