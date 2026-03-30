@@ -52,7 +52,7 @@ python ml_pipeline.py
 ```bash
 python app.py
 ```
-Open **[http://127.0.0.1:5000](http://127.0.0.1:5000)** in your browser to interact with your local instance of EduPredict AI!
+Open **https://student-performance-prediction-zeta.vercel.app/** in your browser to interact with your local instance of EduPredict AI!
 
 ---
 
